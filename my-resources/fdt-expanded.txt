@@ -1,0 +1,16 @@
+
+
+
+
+	struct fdtable *fdt;
+	fdt = ({ 
+		typeof(*((files)->fdt)) *__UNIQUE_ID(rcu) = (typeof(*((files)->fdt)) *__force)READ_ONCE(((files)->fdt));
+		RCU_LOCKDEP_WARN(!((lockdep_is_held(&(files)->file_lock)) || rcu_read_lock_held()), "suspicious rcu_dereference_check() usage");
+		rcu_check_sparse(((files)->fdt), __rcu);
+		((typeof(*((files)->fdt)) __force __kernel *)(__UNIQUE_ID(rcu)));
+	});
+
+
+
+
+	
