@@ -1,0 +1,89 @@
+
+
+	// This is the expanded SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd, unsigned long, arg)
+	// This is the almost-close-to-complete form
+
+	static const char *types__ioctl[] = {			\
+		__MAP(3,__SC_STR_TDECL,unsigned int, fd, unsigned int, cmd, unsigned long, arg)		\
+	};							\
+
+	static const char *args__ioctl[] = {			\
+		__MAP(3,__SC_STR_ADECL,unsigned int, fd, unsigned int, cmd, unsigned long, arg)		\
+	};							\
+
+	static struct syscall_metadata __syscall_meta__ioctl;		\
+	static struct trace_event_call __used				\
+	  event_enter__ioctl = {					\
+		.class			= &event_class_syscall_enter,	\
+		{							\
+			.name                   = "sys_enter_ioctl",	\
+		},							\
+		.event.funcs            = &enter_syscall_print_funcs,	\
+		.data			= (void *)&__syscall_meta__ioctl,\
+		.flags                  = TRACE_EVENT_FL_CAP_ANY,	\
+	};								\
+
+	static struct trace_event_call __used				\
+	  __section("_ftrace_events")					\
+	 *__event_enter__ioctl = &event_enter__ioctl;
+	 
+
+	static struct syscall_metadata __syscall_meta__ioctl;		\
+	static struct trace_event_call __used				\
+	  event_exit__ioctl = {					\
+		.class			= &event_class_syscall_exit,	\
+		{							\
+			.name                   = "sys_exit_ioctl",	\
+		},							\
+		.event.funcs		= &exit_syscall_print_funcs,	\
+		.data			= (void *)&__syscall_meta__ioctl,\
+		.flags                  = TRACE_EVENT_FL_CAP_ANY,	\
+	};								\
+	static struct trace_event_call __used				\
+	  __section("_ftrace_events")					\
+	*__event_exit__ioctl = &event_exit__ioctl;
+
+
+	static struct syscall_metadata __used			\
+	  __syscall_meta__ioctl = {				\
+		.name 		= "sys_ioctl",			\
+		.syscall_nr	= -1,	/* Filled in at boot */	\
+		.nb_args 	= 3,				\
+		.types		= types__ioctl,	\
+		.args		= args__ioctl,	\
+		.enter_event	= &event_enter__ioctl,		\
+		.exit_event	= &event_exit__ioctl,		\
+		.enter_fields	= LIST_HEAD_INIT(__syscall_meta__ioctl.enter_fields), \
+	};							\
+	static struct syscall_metadata __used			\
+	  __section("__syscalls_metadata")			\
+	 *__p_syscall_meta__ioctl = &__syscall_meta__ioctl;
+
+
+
+
+	\
+
+
+
+
+
+	__diag_push();							\
+	__diag_ignore(GCC, 8, "-Wattribute-alias",			\
+		      "Type aliasing is used to sanitize syscall arguments");\
+	asmlinkage long sys_ioctl(__MAP(3,__SC_DECL,unsigned int, fd, unsigned int, cmd, unsigned long, arg))	\
+		__attribute__((alias(__stringify(__se_sys_ioctl))));	\
+	ALLOW_ERROR_INJECTION(sys_ioctl, ERRNO);			\
+	static inline long __do_sys_ioctl(__MAP(3,__SC_DECL,unsigned int, fd, unsigned int, cmd, unsigned long, arg));\
+	asmlinkage long __se_sys_ioctl(__MAP(3,__SC_LONG,unsigned int, fd, unsigned int, cmd, unsigned long, arg));	\
+	asmlinkage long __se_sys_ioctl(__MAP(3,__SC_LONG,unsigned int, fd, unsigned int, cmd, unsigned long, arg))	\
+	{								\
+		long ret = __do_sys_ioctl(__MAP(3,__SC_CAST,unsigned int, fd, unsigned int, cmd, unsigned long, arg));\
+		__MAP(3,__SC_TEST,unsigned int, fd, unsigned int, cmd, unsigned long, arg);				\
+		__PROTECT(3, ret,__MAP(3,__SC_ARGS,unsigned int, fd, unsigned int, cmd, unsigned long, arg));	\
+		return ret;						\
+	}								\
+	__diag_pop();							\
+	static inline long __do_sys_ioctl(__MAP(3,__SC_DECL,unsigned int, fd, unsigned int, cmd, unsigned long, arg))
+
+
